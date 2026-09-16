@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: madahiye-backend
+    runtime: node
+    rootDir: backend
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: DATABASE_URL
+        sync: false
+      - key: PORT
+        value: 10000
+      - key: PLATFORM_MERCHANT_NAME
+        value: Madahiye Platform
+      - key: PLATFORM_MERCHANT_PHONE
+        value: "+252 61 679 6362"
+      - key: PLATFORM_MERCHANT_EVC
+        value: "616796362"

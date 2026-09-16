@@ -9,7 +9,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const DB_FILE = path.join(__dirname, 'data', 'db.json');
 
-app.use(cors());
+// Allow all origins (Vercel frontend, localhost dev, etc)
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json());
 
 // Read JSON DB
