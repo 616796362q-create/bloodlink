@@ -75,8 +75,27 @@ async function initDb(client) {
         status VARCHAR(50) DEFAULT 'Pending',
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
+      -- Admin User
       INSERT INTO users (id, full_name, email, phone, password, role, is_blocked)
       VALUES ('usr-admin-1', 'Madahiye Administrator', 'Emre@gmail.com', '+252 61 679 6362', '321', 'admin', false)
+      ON CONFLICT (id) DO UPDATE SET password='321', email='Emre@gmail.com', full_name='Madahiye Administrator';
+
+      -- Seed 4 Verified Donors into Users and Donors Tables
+      INSERT INTO users (id, full_name, email, phone, password, role, blood_type, region, district, is_blocked)
+      VALUES 
+        ('usr-dnr-1', 'Qasim Cali', 'qasim@gmail.com', '+252 61 623 2323', '222222', 'donor', 'AB+', 'Banaadir', 'Hodan', false),
+        ('usr-dnr-2', 'Dr. Farhiya Axmed', 'farhiya@gmail.com', '+252 61 555 1234', 'password123', 'donor', 'O+', 'Banaadir', 'Wadajir', false),
+        ('usr-dnr-3', 'Maxamed Xasan', 'maxamed@gmail.com', '+252 61 777 8899', 'password123', 'donor', 'A+', 'Banaadir', 'Yaaqshiid', false),
+        ('usr-dnr-4', 'Sahra Cumar', 'sahra@gmail.com', '+252 61 888 4433', 'password123', 'donor', 'B+', 'Banaadir', 'Howlwadaag', false)
+      ON CONFLICT (id) DO NOTHING;
+
+      INSERT INTO donors (id, user_id, full_name, email, phone, blood_type, region, district, availability, donations_count, verified)
+      VALUES 
+        ('dnr-1', 'usr-dnr-1', 'Qasim Cali', 'qasim@gmail.com', '+252 61 623 2323', 'AB+', 'Banaadir', 'Hodan', 'Available', 3, true),
+        ('dnr-2', 'usr-dnr-2', 'Dr. Farhiya Axmed', 'farhiya@gmail.com', '+252 61 555 1234', 'O+', 'Banaadir', 'Wadajir', 'Available', 5, true),
+        ('dnr-3', 'usr-dnr-3', 'Maxamed Xasan', 'maxamed@gmail.com', '+252 61 777 8899', 'A+', 'Banaadir', 'Yaaqshiid', 'Available', 2, true),
+        ('dnr-4', 'usr-dnr-4', 'Sahra Cumar', 'sahra@gmail.com', '+252 61 888 4433', 'B+', 'Banaadir', 'Howlwadaag', 'Available', 4, true)
       ON CONFLICT (id) DO NOTHING;
     `);
   } catch (e) {
