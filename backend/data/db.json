@@ -1,0 +1,71 @@
+{
+  "users": [
+    {
+      "id": "usr-admin-1",
+      "fullName": "Madahiye Administrator",
+      "email": "Emre@gmail.com",
+      "phone": "+252 61 679 6362",
+      "password": "321",
+      "role": "admin",
+      "isBlocked": false,
+      "createdAt": "2026-01-10"
+    },
+    {
+      "id": "usr-1788855950147",
+      "fullName": "qasim",
+      "email": "qasim@gmail.com",
+      "phone": "616232323",
+      "password": "222222",
+      "role": "donor",
+      "bloodType": "AB+",
+      "region": "Banaadir",
+      "district": "hodan",
+      "isBlocked": false,
+      "createdAt": "2026-09-08"
+    },
+    {
+      "id": "usr-1788856683731",
+      "fullName": "codey",
+      "email": "codey@gmail.com",
+      "phone": "612333333",
+      "password": "333333",
+      "role": "receiver",
+      "bloodType": "A+",
+      "region": "Banaadir",
+      "district": "shibs",
+      "isBlocked": false,
+      "createdAt": "2026-09-08"
+    }
+  ],
+  "donors": [
+    {
+      "id": "dnr-1788855950147",
+      "userId": "usr-1788855950147",
+      "fullName": "qasim",
+      "email": "qasim@gmail.com",
+      "phone": "616232323",
+      "bloodType": "AB+",
+      "region": "Banaadir",
+      "district": "hodan",
+      "availability": "Available",
+      "donationsCount": 0,
+      "verified": true,
+      "avatar": null
+    }
+  ],
+  "receivers": [
+    {
+      "id": "rcv-1788856683731",
+      "userId": "usr-1788856683731",
+      "fullName": "codey",
+      "email": "codey@gmail.com",
+      "phone": "612333333",
+      "bloodTypeNeeded": "A+",
+      "region": "Banaadir",
+      "district": "shibs"
+    }
+  ],
+  "requests": [],
+  "payments": [],
+  "notifications": []
+}
