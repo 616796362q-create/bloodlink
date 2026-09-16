@@ -20,10 +20,10 @@ export default function App() {
     try { return JSON.parse(localStorage.getItem('bloodlink_user') || 'null'); } catch { return null; }
   });
 
-  const [donors, setDonors] = useState(INITIAL_DONORS || []);
-  const [requests, setRequests] = useState(INITIAL_REQUESTS || []);
-  const [payments, setPayments] = useState(INITIAL_PAYMENTS || []);
-  const [users, setUsers] = useState(INITIAL_USERS || []);
+  const [donors, setDonors] = useState([]);
+  const [requests, setRequests] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [users, setUsers] = useState([]);
   const [receivers, setReceivers] = useState([]);
 
   const [selectedDonorProfile, setSelectedDonorProfile] = useState(null);
@@ -35,16 +35,16 @@ export default function App() {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
 
-  // Load from API gracefully on mount
+  // Load purely from Neon PostgreSQL on mount
   useEffect(() => {
     async function loadData() {
       try {
         const fetchedDonorsData = await fetchDonors();
-        if (fetchedDonorsData && Array.isArray(fetchedDonorsData) && fetchedDonorsData.length > 0) {
+        if (fetchedDonorsData && Array.isArray(fetchedDonorsData)) {
           setDonors(fetchedDonorsData);
         }
       } catch (err) {
-        console.warn('Initial donors load (using local cache):', err.message);
+        console.warn('[Neon DB] Donors fetch note:', err.message);
       }
     }
     loadData();

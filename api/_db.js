@@ -10,7 +10,7 @@ function getPool() {
     pool = new Pool({
       connectionString,
       ssl: { rejectUnauthorized: false },
-      max: 3,
+      max: 4,
       idleTimeoutMillis: 30000,
       connectionTimeoutMillis: 8000,
     });
@@ -34,9 +34,10 @@ async function initDb(client) {
         is_blocked BOOLEAN DEFAULT false,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
+
       CREATE TABLE IF NOT EXISTS donors (
         id VARCHAR(100) PRIMARY KEY,
-        user_id VARCHAR(100),
+        user_id VARCHAR(100) REFERENCES users(id) ON DELETE CASCADE,
         full_name VARCHAR(255) NOT NULL,
         email VARCHAR(255),
         phone VARCHAR(50),
@@ -48,9 +49,10 @@ async function initDb(client) {
         verified BOOLEAN DEFAULT true,
         avatar TEXT
       );
+
       CREATE TABLE IF NOT EXISTS receivers (
         id VARCHAR(100) PRIMARY KEY,
-        user_id VARCHAR(100),
+        user_id VARCHAR(100) REFERENCES users(id) ON DELETE CASCADE,
         full_name VARCHAR(255) NOT NULL,
         email VARCHAR(255),
         phone VARCHAR(50),
@@ -58,6 +60,7 @@ async function initDb(client) {
         region VARCHAR(100),
         district VARCHAR(100)
       );
+
       CREATE TABLE IF NOT EXISTS blood_requests (
         id VARCHAR(100) PRIMARY KEY,
         receiver_id VARCHAR(100),
@@ -76,27 +79,10 @@ async function initDb(client) {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
 
-      -- Admin User
+      -- Only Ensure Admin Exists
       INSERT INTO users (id, full_name, email, phone, password, role, is_blocked)
       VALUES ('usr-admin-1', 'Madahiye Administrator', 'Emre@gmail.com', '+252 61 679 6362', '321', 'admin', false)
       ON CONFLICT (id) DO UPDATE SET password='321', email='Emre@gmail.com', full_name='Madahiye Administrator';
-
-      -- Seed 4 Verified Donors into Users and Donors Tables
-      INSERT INTO users (id, full_name, email, phone, password, role, blood_type, region, district, is_blocked)
-      VALUES 
-        ('usr-dnr-1', 'Qasim Cali', 'qasim@gmail.com', '+252 61 623 2323', '222222', 'donor', 'AB+', 'Banaadir', 'Hodan', false),
-        ('usr-dnr-2', 'Dr. Farhiya Axmed', 'farhiya@gmail.com', '+252 61 555 1234', 'password123', 'donor', 'O+', 'Banaadir', 'Wadajir', false),
-        ('usr-dnr-3', 'Maxamed Xasan', 'maxamed@gmail.com', '+252 61 777 8899', 'password123', 'donor', 'A+', 'Banaadir', 'Yaaqshiid', false),
-        ('usr-dnr-4', 'Sahra Cumar', 'sahra@gmail.com', '+252 61 888 4433', 'password123', 'donor', 'B+', 'Banaadir', 'Howlwadaag', false)
-      ON CONFLICT (id) DO NOTHING;
-
-      INSERT INTO donors (id, user_id, full_name, email, phone, blood_type, region, district, availability, donations_count, verified)
-      VALUES 
-        ('dnr-1', 'usr-dnr-1', 'Qasim Cali', 'qasim@gmail.com', '+252 61 623 2323', 'AB+', 'Banaadir', 'Hodan', 'Available', 3, true),
-        ('dnr-2', 'usr-dnr-2', 'Dr. Farhiya Axmed', 'farhiya@gmail.com', '+252 61 555 1234', 'O+', 'Banaadir', 'Wadajir', 'Available', 5, true),
-        ('dnr-3', 'usr-dnr-3', 'Maxamed Xasan', 'maxamed@gmail.com', '+252 61 777 8899', 'A+', 'Banaadir', 'Yaaqshiid', 'Available', 2, true),
-        ('dnr-4', 'usr-dnr-4', 'Sahra Cumar', 'sahra@gmail.com', '+252 61 888 4433', 'B+', 'Banaadir', 'Howlwadaag', 'Available', 4, true)
-      ON CONFLICT (id) DO NOTHING;
     `);
   } catch (e) {
     console.error('initDb error:', e.message);
