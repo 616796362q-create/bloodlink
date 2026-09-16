@@ -20,10 +20,10 @@ export default function App() {
     try { return JSON.parse(localStorage.getItem('bloodlink_user') || 'null'); } catch { return null; }
   });
 
-  const [donors, setDonors] = useState([]);
-  const [requests, setRequests] = useState([]);
-  const [payments, setPayments] = useState([]);
-  const [users, setUsers] = useState([]);
+  const [donors, setDonors] = useState(INITIAL_DONORS || []);
+  const [requests, setRequests] = useState(INITIAL_REQUESTS || []);
+  const [payments, setPayments] = useState(INITIAL_PAYMENTS || []);
+  const [users, setUsers] = useState(INITIAL_USERS || []);
   const [receivers, setReceivers] = useState([]);
 
   const [selectedDonorProfile, setSelectedDonorProfile] = useState(null);
@@ -35,22 +35,19 @@ export default function App() {
   const [isSuccessOpen, setIsSuccessOpen] = useState(false);
   const [toastMsg, setToastMsg] = useState(null);
 
-  // Load from API on mount
+  // Load from API gracefully on mount
   useEffect(() => {
     async function loadData() {
-      const fetchedDonorsData = await fetchDonors();
-      if (fetchedDonorsData) setDonors(fetchedDonorsData);
-
-      const stats = await fetchAdminStats();
-      if (stats) {
-        if (stats.donors) setDonors(stats.donors);
-        if (stats.requests) setRequests(stats.requests);
-        if (stats.payments) setPayments(stats.payments);
-        if (stats.users) setUsers(stats.users);
-        if (stats.receivers) setReceivers(stats.receivers);
+      try {
+        const fetchedDonorsData = await fetchDonors();
+        if (fetchedDonorsData && Array.isArray(fetchedDonorsData) && fetchedDonorsData.length > 0) {
+          setDonors(fetchedDonorsData);
+        }
+      } catch (err) {
+        console.warn('Initial donors load (using local cache):', err.message);
       }
     }
-    loadData().catch(() => showToast('Unable to connect to BloodLink. Please try again shortly.'));
+    loadData();
   }, []);
 
   // Re-fetch fresh data whenever the admin dashboard is opened

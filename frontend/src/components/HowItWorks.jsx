@@ -18,7 +18,7 @@ export default function HowItWorks({ onSearchClick }) {
             <div className="w-14 h-14 bg-rose-600 text-white rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-md shadow-rose-600/20 font-black text-xl">
               1
             </div>
-            <h3 className="text-lg font-bold text-slate-900 mb-2">Search Donors (FREE)</h3>
+            <h3 className="text-lg font-bold text-slate-900 mb-2">Search Donors</h3>
             <p className="text-slate-500 text-xs leading-relaxed">Find nearby voluntary donors by Blood Type (O+, A+, B+, etc.) and Region directly without needing to login first.</p>
           </div>
 
@@ -37,7 +37,7 @@ export default function HowItWorks({ onSearchClick }) {
               3
             </div>
             <h3 className="text-lg font-bold text-slate-900 mb-2">Instant WhatsApp Connect</h3>
-            <p className="text-slate-500 text-xs leading-relaxed">Click 'Request Blood' to connect directly on WhatsApp with Madahiye (+252 61 679 6362) 100% FREE.</p>
+            <p className="text-slate-500 text-xs leading-relaxed">Click 'Request Blood' to connect directly on WhatsApp with Madahiye (+252 61 679 6362).</p>
           </div>
 
         </div>
