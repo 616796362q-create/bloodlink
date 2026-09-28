@@ -7,7 +7,9 @@ import DonorProfileModal from './components/DonorProfileModal';
 import DonorDashboard from './components/DonorDashboard';
 import ReceiverDashboard from './components/ReceiverDashboard';
 import AdminDashboard from './components/AdminDashboard';
-import MaintenanceLanding from './components/MaintenanceLanding';
+import AuthModal from './components/AuthModal';
+import SuccessModal from './components/SuccessModal';
+import SideLoginDrawer from './components/SideLoginDrawer';
 
 import { INITIAL_DONORS, INITIAL_REQUESTS, INITIAL_PAYMENTS, INITIAL_USERS } from './services/mockData';
 import { fetchDonors, createBloodRequest, updateRequestStatus, toggleDonorAvailability, fetchAdminStats, toggleUserBlock, registerUser, loginUser, editUser, deleteUser } from './services/api';
@@ -16,10 +18,7 @@ export default function App() {
   const [currentUser, setCurrentUser] = useState(() => {
     try { return JSON.parse(localStorage.getItem('bloodlink_user') || 'null'); } catch { return null; }
   });
-  const [activeView, setActiveView] = useState(() => {
-    const savedUser = localStorage.getItem('bloodlink_user');
-    return savedUser ? 'home' : 'maintenance';
-  });
+  const [activeView, setActiveView] = useState('home');
   const [activeRole, setActiveRole] = useState(() => {
     try {
       const u = JSON.parse(localStorage.getItem('bloodlink_user') || 'null');
@@ -28,6 +27,7 @@ export default function App() {
       return 'guest';
     }
   });
+  const [isSideLoginOpen, setIsSideLoginOpen] = useState(false);
 
   const [donors, setDonors] = useState([]);
   const [requests, setRequests] = useState([]);
@@ -318,24 +318,6 @@ export default function App() {
     )
   );
 
-  if (activeView === 'maintenance') {
-    return (
-      <>
-        {/* Toast Alert */}
-        {toastMsg && (
-          <div className="fixed bottom-6 right-6 z-50 bg-navy-900 text-white px-5 py-3.5 rounded-2xl shadow-2xl border border-slate-700 flex items-center space-x-3 animate-bounce">
-            <span className="text-emerald-400 font-bold">✓</span>
-            <span className="text-xs font-semibold">{toastMsg}</span>
-          </div>
-        )}
-        <MaintenanceLanding 
-          onLogin={handleLogin} 
-          onEnterPlatform={() => setActiveView('home')} 
-        />
-      </>
-    );
-  }
-
   return (
     <div className="min-h-screen flex flex-col justify-between bg-slate-50 text-slate-900">
       
@@ -354,12 +336,11 @@ export default function App() {
         activeRole={activeRole}
         setActiveRole={setActiveRole}
         onOpenAuth={() => {
-          setAuthModalView('login');
-          setIsAuthOpen(true);
+          setIsSideLoginOpen(true);
         }}
         currentUser={currentUser}
         onOpenDashboard={() => setActiveView(currentUser?.role === 'admin' ? 'admin-dashboard' : `${currentUser?.role}-dashboard`)}
-        onLogout={() => { localStorage.removeItem('bloodlink_user'); setCurrentUser(null); setActiveRole('guest'); setActiveView('maintenance'); }}
+        onLogout={() => { localStorage.removeItem('bloodlink_user'); setCurrentUser(null); setActiveRole('guest'); setActiveView('home'); }}
       />
 
       {/* Main Views Router */}
@@ -602,6 +583,19 @@ export default function App() {
           }}
         />
       )}
+
+      {/* Floating Side Login Drawer (Sample UI Matching User Request) */}
+      <SideLoginDrawer 
+        isOpen={isSideLoginOpen}
+        onToggle={() => setIsSideLoginOpen(!isSideLoginOpen)}
+        onClose={() => setIsSideLoginOpen(false)}
+        onLogin={handleLogin}
+        onOpenRegister={() => {
+          setAuthModalView('register-step1');
+          setAuthModalRole('donor');
+          setIsAuthOpen(true);
+        }}
+      />
 
     </div>
   );
