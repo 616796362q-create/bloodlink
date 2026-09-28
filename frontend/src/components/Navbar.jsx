@@ -130,6 +130,14 @@ export default function Navbar({ activeView, setActiveView, onOpenAuth, currentU
                     <LogOut className="w-3.5 h-3.5" />
                     <span>Logout</span>
                   </button>
+                  <button 
+                    type="button"
+                    onClick={() => handleNavClick('maintenance')} 
+                    className="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors cursor-pointer"
+                    title="Lock Screen (Maintenance Mode)"
+                  >
+                    <Lock className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               )}
             </div>
