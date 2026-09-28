@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Lock, Unlock, User, KeyRound, AlertCircle, X, LogIn, Heart } from 'lucide-react';
 
-export default function SideLoginDrawer({ isOpen, onToggle, onClose, onLogin, onOpenRegister }) {
+export default function SideLoginDrawer({ isOpen, isLocked = false, onToggle, onClose, onLogin, onOpenRegister }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -69,13 +69,16 @@ export default function SideLoginDrawer({ isOpen, onToggle, onClose, onLogin, on
                 User Login
               </h3>
             </div>
-            <button
-              type="button"
-              onClick={onClose}
-              className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            {/* Close button — hidden when platform is locked */}
+            {!isLocked && (
+              <button
+                type="button"
+                onClick={onClose}
+                className="p-1.5 rounded-lg hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            )}
           </div>
 
           {/* Error Alert */}
@@ -188,8 +191,8 @@ export default function SideLoginDrawer({ isOpen, onToggle, onClose, onLogin, on
         </div>
       </div>
 
-      {/* Backdrop overlay when Drawer is open */}
-      {isOpen && (
+      {/* Backdrop — only clickable when NOT locked */}
+      {isOpen && !isLocked && (
         <div 
           onClick={onClose}
           className="fixed inset-0 bg-black/60 backdrop-blur-xs z-40 transition-opacity"

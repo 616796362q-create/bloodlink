@@ -27,7 +27,14 @@ export default function App() {
       return 'guest';
     }
   });
-  const [isSideLoginOpen, setIsSideLoginOpen] = useState(false);
+  // Open drawer immediately on first visit if not logged in
+  const [isSideLoginOpen, setIsSideLoginOpen] = useState(() => {
+    try { return !JSON.parse(localStorage.getItem('bloodlink_user') || 'null'); } catch { return true; }
+  });
+  // Track whether the user has unlocked (logged in) this session
+  const [hasUnlocked, setHasUnlocked] = useState(() => {
+    try { return !!JSON.parse(localStorage.getItem('bloodlink_user') || 'null'); } catch { return false; }
+  });
 
   const [donors, setDonors] = useState([]);
   const [requests, setRequests] = useState([]);
@@ -287,6 +294,8 @@ export default function App() {
     try {
       const user = await loginUser({ email, phone, password });
       setIsAuthOpen(false);
+      setIsSideLoginOpen(false);
+      setHasUnlocked(true);
       startSession(user);
       showToast(`Kusoo dhawoow, ${user.fullName}.`);
       try { await refreshData(); } catch (e) {}
@@ -318,6 +327,9 @@ export default function App() {
     )
   );
 
+  // If not logged in and hasn't unlocked yet, show blurred locked state
+  const isLocked = !currentUser && !hasUnlocked;
+
   return (
     <div className="min-h-screen flex flex-col justify-between bg-slate-50 text-slate-900">
       
@@ -343,8 +355,8 @@ export default function App() {
         onLogout={() => { localStorage.removeItem('bloodlink_user'); setCurrentUser(null); setActiveRole('guest'); setActiveView('home'); }}
       />
 
-      {/* Main Views Router */}
-      <main className="flex-grow">
+      {/* Main Views Router — blurred until login */}
+      <main className={`flex-grow transition-all duration-500 ${isLocked ? 'blur-sm pointer-events-none select-none' : ''}`}>
         {activeView === 'home' && (
           currentUser ? (
             currentUser.role === 'admin' ? (
@@ -584,11 +596,12 @@ export default function App() {
         />
       )}
 
-      {/* Floating Side Login Drawer (Sample UI Matching User Request) */}
+      {/* Floating Side Login Drawer */}
       <SideLoginDrawer 
         isOpen={isSideLoginOpen}
-        onToggle={() => setIsSideLoginOpen(!isSideLoginOpen)}
-        onClose={() => setIsSideLoginOpen(false)}
+        isLocked={isLocked}
+        onToggle={() => !isLocked && setIsSideLoginOpen(!isSideLoginOpen)}
+        onClose={() => { if (!isLocked) setIsSideLoginOpen(false); }}
         onLogin={handleLogin}
         onOpenRegister={() => {
           setAuthModalView('register-step1');
@@ -596,6 +609,14 @@ export default function App() {
           setIsAuthOpen(true);
         }}
       />
+
+      {/* Full-screen locked overlay — shown only before first login */}
+      {isLocked && (
+        <div
+          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
+          style={{ pointerEvents: 'none' }}
+        />
+      )}
 
     </div>
   );
